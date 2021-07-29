@@ -1,0 +1,3 @@
+Three different mcmc versions to run for AET, equal-arm and unequal_arm noise covariance matrix. 
+User can specify filename for output chains in the code, but the chainfiles used to produce the plots 
+in the paper are contained in this directory, along with the python programs used for plotting them.

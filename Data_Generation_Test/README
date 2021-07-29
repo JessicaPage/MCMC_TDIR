@@ -1,0 +1,19 @@
+For comparing two methods of data generation for ensuring the use of FDI in generating the delays that create 
+LFN does not bias results. Langrange windowed FDI N=49 with sampling rate of 4 Hz compared to data beginning with a sampling
+rate of 1 kHz using LaGrnage windowed FDI N=101, then downsampled to 4 Hz.
+
+
+Data Generation Files:
+
+a) Interpolation only (no oversampling): generate_data_via_interpolation_N=49.py
+
+b) Oversampled + N=101: First run comparison_data_step_1.py then comparison_data_step_2.py to add the secondary noises if needed
+
+Want to run LFN only version of data for this test, so we want to use 'data_fs_4_N=49_LFN_only.dat' from output (a), and 
+'comparison_data_fs_1e3_N=101_LFN_only.dat' from output of 'comparison_data_step_1.py' step (b) 
+(no need to run comparison_data_step_2.py in step (b).)
+
+Then run mcmc_compare_data.py with "data file name" as first argument and "name of the file" you want to store the chain as the second argument.
+So [mcmc_compare_data.py -p "data_file_name.dat" "chainfile_name_you_want.dat"]
+
+Plots shown in paper used chainfile_..._941 and 942.dat for the plotting python programs in the directory.

@@ -1,0 +1,14 @@
+\begin{table}
+    \centering
+    \caption{}
+    \label{tab:model_params}
+    \begin{tabular}{ccccccc}
+        \hline
+		Model & $\delta L_{3} \: (ns)$ & $\delta L_{2} \: (ns)$ & $\delta L_{1} \: (ns)$ & $\delta L^{'}_{3} \: (ns)$ & $\delta L^{'}_{2} \: (ns)$ & $\delta L^{'}_{1} \: (ns)$ \\ 
+		\hline
+		AET & $-1.1^{+9.8}_{-13.2}$ & $0.6^{+9.1}_{-10.9}$ & $-15.2^{+9.1}_{-12.7}$ & $-7^{+12}_{-10}$ &  & $8.9^{+8.5}_{-15.4}$ \\ 
+		Equal-arm XYZ & $-10.1^{+18.4}_{-4.6}$ &  & $-18^{+11}_{-10}$ & $-9.2^{+17.2}_{-6.1}$ & $6.3^{+5.6}_{-16.1}$ & $7.7^{+9.9}_{-13.3}$ \\ 
+		Unequal-arm XYZ &  &  &  &  &  &  \\ 
+		\hline
+    \end{tabular}
+\end{table}

@@ -1,0 +1,11 @@
+
+
+MCMC (mcmc_filter_length_tests.py) automatically runs on "data_fs_4_N=49_FOR_RUN.dat" 
+in Data_Simulation directory outside of this one but user can change the file name inside the code.
+
+Command line arguments will be the filter length you want use. Output chain will have filename
+"chainfile_N=[].dat"
+
+So run "python mcmc_filter_length_tests.py -p [filter length integer (must be odd)]"
+
+Data used for plots in paper are in MCMC subdirectory here, and plotted in the Plot subdirectory.
