@@ -38,12 +38,14 @@ def lagrange(n,N,D_here):
 	N = float(N)
 	n = float(n) 
 	t_D = 0.5*(N-1)+D
-	
+	'''
 	if D < 1.e-12:
 		window = 1.
 	else:
 		window = math.pi*N/(math.sin(math.pi*t_D))*binomial(t_D,N)*binomial((N-1),(n+(N-1)*0.5))
-	
+	'''
+	window = math.pi*N/(math.sin(math.pi*t_D))*binomial(t_D,N)*binomial((N-1),(n+(N-1)*0.5))
+
 
 	return window
 
@@ -147,6 +149,8 @@ def x_combo(L_3_here, L_2_here,L_3_p_here,L_2_p_here):
 
 	x_combo_f_domain = np.fft.rfft(window*x_combo_val,norm='ortho')[indices_f_band]
 
+
+	x_combo_val = np.fft.irfft(x_combo_f_domain, norm='ortho')
 
 	
 
@@ -364,7 +368,7 @@ f_samp = 4
 
 
 #lagrange filter length
-number_n = 19
+number_n = 29
 
 f_min = 1.0e-4 # (= 0.0009765625)
 f_max = 1.0e-1
@@ -467,7 +471,7 @@ start_time = time.time()
 #number_chain = 1000000
 number_chain = 50000
 #number_chain  = 5000
-checkfile = open('chainfile_noise_matrix_equal_arm_967_19.dat','w')
+checkfile = open('chainfile_noise_matrix_equal_arm_967_29.dat','w')
 checkfile.write("#likelihood" + " " + "log_term_determ" + " " + "sum_chi_2" + " " + "L_1" + " " + "L_1_p" + " " + "L_2" + " " + "L_2_p" + " " + "L_3" + " " + "L_3_p" + " " + "Current_AR" + "\n") 
 k=1
 
@@ -500,7 +504,7 @@ z_combo_initial = z_combo(initial_L_2,initial_L_1,initial_L_2_p,initial_L_1_p)
 
 
 old_likelihood,determ_here,chi_2_here = likelihood_analytical_equal_arm(x_combo_initial,y_combo_initial,z_combo_initial)
-
+#sys.exit()
 checkfile.write(str(old_likelihood) + " " + str(determ_here) + " " + str(chi_2_here) + " " + str(initial_L_1) + " " + str(initial_L_1_p) + " " + str(initial_L_2) + " " + str(initial_L_2_p)+ " " + str(initial_L_3) + " " + str(initial_L_3_p) + " " + str(accept/k) + "\n")
 old_L_1 = initial_L_1
 old_L_1_p = initial_L_1_p

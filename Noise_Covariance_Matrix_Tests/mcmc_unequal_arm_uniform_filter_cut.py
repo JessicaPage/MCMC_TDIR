@@ -38,12 +38,13 @@ def lagrange(n,N,D_here):
 	N = float(N)
 	n = float(n) 
 	t_D = 0.5*(N-1)+D
-	
+	'''
 	if D < 1.e-12:
 		window = 1.
 	else:
 		window = math.pi*N/(math.sin(math.pi*t_D))*binomial(t_D,N)*binomial((N-1),(n+(N-1)*0.5))
-	
+	'''
+	window = math.pi*N/(math.sin(math.pi*t_D))*binomial(t_D,N)*binomial((N-1),(n+(N-1)*0.5))
 
 	return window
 

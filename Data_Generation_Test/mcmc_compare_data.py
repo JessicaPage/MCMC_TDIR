@@ -36,10 +36,14 @@ def lagrange(n,N,D_here):
 	N = float(N)
 	n = float(n) 
 	t_D = 0.5*(N-1)+D
+	'''
 	if D < 1.e-12:
 		window = 1.
 	else:
 		window = math.pi*N/(math.sin(math.pi*t_D))*binomial(t_D,N)*binomial((N-1),(n+(N-1)*0.5))
+	'''
+	window = math.pi*N/(math.sin(math.pi*t_D))*binomial(t_D,N)*binomial((N-1),(n+(N-1)*0.5))
+
 	return window
 
 
@@ -350,14 +354,13 @@ L_3_p = 8.338867041
 
 
 
-f_s = 3
+f_s = 4
 
-f_samp = 3
+f_samp = 4
 
-time_length = 24*3600
 
 #lagrange filter length
-number_n = 31
+number_n = 49
 
 f_min = 1e-4 # (= 0.0009765625)
 f_max = 1e-1
