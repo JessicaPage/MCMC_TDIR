@@ -788,7 +788,73 @@ print(length)
 print('two_power')
 print(two_power)
 
+window = cosine(length)
 
+#FFT's for manual FFT convolution in interpolation step
+s31_f_convolve = np.fft.rfft(window*s31,two_power,norm='ortho')
+s21_f_convolve = np.fft.rfft(window*s21,two_power,norm='ortho')
+s32_f_convolve = np.fft.rfft(window*s32,two_power,norm='ortho')
+s12_f_convolve = np.fft.rfft(window*s12,two_power,norm='ortho')
+s23_f_convolve = np.fft.rfft(window*s23,two_power,norm='ortho')
+s13_f_convolve = np.fft.rfft(window*s13,two_power,norm='ortho')
+tau31_f_convolve = np.fft.rfft(window*tau31,two_power,norm='ortho')
+tau21_f_convolve = np.fft.rfft(window*tau21,two_power,norm='ortho')
+tau32_f_convolve = np.fft.rfft(window*tau32,two_power,norm='ortho')
+tau12_f_convolve = np.fft.rfft(window*tau12,two_power,norm='ortho')
+tau23_f_convolve = np.fft.rfft(window*tau23,two_power,norm='ortho')
+tau13_f_convolve = np.fft.rfft(window*tau13,two_power,norm='ortho')
+eps31_f_convolve = np.fft.rfft(window*eps31,two_power,norm='ortho')
+eps21_f_convolve = np.fft.rfft(window*eps21,two_power,norm='ortho')
+eps32_f_convolve = np.fft.rfft(window*eps32,two_power,norm='ortho')
+eps12_f_convolve = np.fft.rfft(window*eps12,two_power,norm='ortho')
+eps23_f_convolve = np.fft.rfft(window*eps23,two_power,norm='ortho')
+eps13_f_convolve = np.fft.rfft(window*eps13,two_power,norm='ortho')
+
+
+extra_pad = two_power-length
+half_extra = (extra_pad)//2
+
+#FFTs for TDI subtraction (Zeroes have to be padded on either side instead of at end.)
+s31_half_pad = np.pad(window*s31,(half_extra,half_extra),'constant')
+s21_half_pad = np.pad(window*s21,(half_extra,half_extra),'constant')
+s32_half_pad = np.pad(window*s32,(half_extra,half_extra),'constant')
+s12_half_pad = np.pad(window*s12,(half_extra,half_extra),'constant')
+s23_half_pad = np.pad(window*s23,(half_extra,half_extra),'constant')
+s13_half_pad = np.pad(window*s13,(half_extra,half_extra),'constant')
+tau31_half_pad = np.pad(window*tau31,(half_extra,half_extra),'constant')
+tau21_half_pad = np.pad(window*tau21,(half_extra,half_extra),'constant')
+tau32_half_pad = np.pad(window*tau32,(half_extra,half_extra),'constant')
+tau12_half_pad = np.pad(window*tau12,(half_extra,half_extra),'constant')
+tau23_half_pad = np.pad(window*tau23,(half_extra,half_extra),'constant')
+tau13_half_pad = np.pad(window*tau13,(half_extra,half_extra),'constant')
+eps31_half_pad = np.pad(window*eps31,(half_extra,half_extra),'constant')
+eps21_half_pad = np.pad(window*eps21,(half_extra,half_extra),'constant')
+eps32_half_pad = np.pad(window*eps32,(half_extra,half_extra),'constant')
+eps12_half_pad = np.pad(window*eps12,(half_extra,half_extra),'constant')
+eps23_half_pad = np.pad(window*eps23,(half_extra,half_extra),'constant')
+eps13_half_pad = np.pad(window*eps13,(half_extra,half_extra),'constant')
+
+
+s31_f_subtract = np.fft.rfft(s31_half_pad,norm='ortho')
+s21_f_subtract = np.fft.rfft(s21_half_pad,norm='ortho')
+s32_f_subtract = np.fft.rfft(s32_half_pad,norm='ortho')
+s12_f_subtract = np.fft.rfft(s12_half_pad,norm='ortho')
+s23_f_subtract = np.fft.rfft(s23_half_pad,norm='ortho')
+s13_f_subtract = np.fft.rfft(s13_half_pad,norm='ortho')
+tau31_f_subtract = np.fft.rfft(tau31_half_pad,norm='ortho')
+tau21_f_subtract = np.fft.rfft(tau21_half_pad,norm='ortho')
+tau32_f_subtract = np.fft.rfft(tau32_half_pad,norm='ortho')
+tau12_f_subtract = np.fft.rfft(tau12_half_pad,norm='ortho')
+tau23_f_subtract = np.fft.rfft(tau23_half_pad,norm='ortho')
+tau13_f_subtract = np.fft.rfft(tau13_half_pad,norm='ortho')
+eps31_f_subtract = np.fft.rfft(eps31_half_pad,norm='ortho')
+eps21_f_subtract = np.fft.rfft(eps21_half_pad,norm='ortho')
+eps32_f_subtract = np.fft.rfft(eps32_half_pad,norm='ortho')
+eps12_f_subtract = np.fft.rfft(eps12_half_pad,norm='ortho')
+eps23_f_subtract = np.fft.rfft(eps23_half_pad,norm='ortho')
+eps13_f_subtract = np.fft.rfft(eps13_half_pad,norm='ortho')
+
+'''
 #FFT's for manual FFT convolution in interpolation step
 s31_f_convolve = np.fft.rfft(s31,two_power,norm='ortho')
 s21_f_convolve = np.fft.rfft(s21,two_power,norm='ortho')
@@ -855,7 +921,7 @@ eps32_f_subtract = np.fft.rfft(eps32_half_pad,norm='ortho')
 eps12_f_subtract = np.fft.rfft(eps12_half_pad,norm='ortho')
 eps23_f_subtract = np.fft.rfft(eps23_half_pad,norm='ortho')
 eps13_f_subtract = np.fft.rfft(eps13_half_pad,norm='ortho')
-
+'''
 
 nearest_number = m
 
