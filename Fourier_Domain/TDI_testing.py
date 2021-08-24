@@ -8,6 +8,8 @@ from scipy.signal import fftconvolve,cosine
 import time
 from scipy.stats import norm, multivariate_normal
 from astropy import constants as const
+from scipy.fft import next_fast_len
+
 #import argparse
 
 def next_two_power(n):
@@ -445,14 +447,19 @@ two_power = next_two_power(length)
 m = two_power-length+1
 
 '''
-m =301
+m =291
 #avoid circular convolution
 two_power=length+m-1
+
+two_power = next_fast_len(two_power,real=True)
+m = two_power-length+1
 
 print('length')
 print(length)
 print('two_power')
 print(two_power)
+print('m')
+print(m)
 
 #FFT's for manual FFT convolution in interpolation step
 s31_f_convolve = np.fft.rfft(s31,two_power,norm='ortho')
