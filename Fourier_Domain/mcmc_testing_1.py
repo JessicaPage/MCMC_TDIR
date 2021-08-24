@@ -4,6 +4,7 @@ import numpy as np
 #import matplotlib.pyplot as plt
 import math
 from scipy.signal import cosine
+from scipy.fft import next_fast_len
 #from mpmath import *
 import time
 from scipy.stats import norm
@@ -153,6 +154,7 @@ def x_combo(L_3_here, L_2_here,L_3_p_here,L_2_p_here):
 	x_combo_val = x_combo_val[beg_ind:end_ind]
 
 	x_combo_f_domain = np.fft.rfft(window*x_combo_val,norm='ortho')[indices_f_band]
+
 
 	return x_combo_f_domain
 
@@ -464,15 +466,23 @@ length = len(s31)
 
 del data
 
-m =301
+
+
+
+m =291
 #avoid circular convolution
 two_power=length+m-1
 
+two_power = next_fast_len(two_power,real=True)
+m = two_power-length+1
+'''
 print('length')
 print(length)
 print('two_power')
 print(two_power)
-
+print('m')
+print(m)
+'''
 #FFT's for manual FFT convolution in interpolation step
 s31_f_convolve = np.fft.rfft(s31,two_power,norm='ortho')
 s21_f_convolve = np.fft.rfft(s21,two_power,norm='ortho')
