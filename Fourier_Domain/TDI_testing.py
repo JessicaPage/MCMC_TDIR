@@ -16,6 +16,14 @@ def next_two_power(n):
 
 	return int(pow(2, ceil(log(n, 2))))
 
+def _centered_from_scipy(arr, newshape):
+    # Return the center newshape portion of the array.
+    newshape = np.asarray(newshape)
+    currshape = np.array(arr.shape)
+    startind = (currshape - newshape) // 2
+    endind = startind + newshape
+    myslice = [slice(startind[k], endind[k]) for k in range(len(endind))]
+    return arr[tuple(myslice)]
 
 #...........................CREATING FILTERS.......................................
 def filters_lagrange(delay):
@@ -52,7 +60,7 @@ def lagrange(n,N,D_here):
 		window = math.pi*N/(math.sin(math.pi*t_D))*binomial(t_D,N)*binomial((N-1),(n+(N-1)*0.5))
 	'''
 	window = math.pi*N/(math.sin(math.pi*t_D))*binomial(t_D,N)*binomial((N-1),(n+(N-1)*0.5))
-
+	
 	return window
 
 def S_y_proof_mass_new_frac_freq(f):
@@ -68,6 +76,7 @@ def S_y_OMS_frac_freq(f):
 
 #cutting off bad data due to delay times and filter length, 
 #indices chosen once at beginning instead of every iteration
+
 def cut_data(D_3,D_2,D_1,D_3_p,D_2_p,D_1_p,f_rate,length):
 
 	D_2_val = int(round(f_rate*D_2))
@@ -82,9 +91,13 @@ def cut_data(D_3,D_2,D_1,D_3_p,D_2_p,D_1_p,f_rate,length):
 	#filter_cut = int(round((61-1)))
 
 
-	beg_ind = half_extra + filter_cut + D_3_val+D_2_val+D_1_val+D_3_p_val+D_2_p_val+D_1_p_val
+	#beg_ind = half_extra + filter_cut + D_3_val+D_2_val+D_1_val+D_3_p_val+D_2_p_val+D_1_p_val
+	#beg_ind = half_extra + filter_cut 
+	beg_ind = filter_cut + D_3_val+D_2_val+D_1_val+D_3_p_val+D_2_p_val+D_1_p_val
+
 	#beg_ind = filter_cut
-	end_ind = int(two_power - filter_cut - half_extra - 1)
+	#end_ind = int(two_power - filter_cut - half_extra - 1)
+	end_ind = int(length - filter_cut - 1)
 
 
 	return beg_ind, end_ind
@@ -158,7 +171,9 @@ def x_combo(L_3_here, L_2_here,L_3_p_here,L_2_p_here):
 
 	x_combo_val = np.fft.irfft(x_combo_f_domain, norm='ortho')
 
-	x_combo_val = x_combo_val[beg_ind:end_ind]
+	centered_x = _centered_from_scipy(x_combo_val,length)
+
+	x_combo_val = centered_x[beg_ind:end_ind]
 
 	x_combo_f_domain = np.fft.rfft(window*x_combo_val,norm='ortho')[indices_f_band]
 
@@ -231,11 +246,11 @@ def y_combo(L_3_here, L_1_here,L_3_p_here,L_1_p_here):
 	y_combo_f_domain = s12_f_subtract + s_21_3_f + s_32_3p_3_f + s_23_1p_3p_3_f - s32_f_subtract - s_23_1p_f - s_12_1_1p_f - s_21_3_1_1p_f + 0.5*(tau_32_3_p_3_1_1p_f - tau_12_3_p_3_1_1p_f - tau32_1_1p_f + tau12_1_1p_f - tau32_3p_3_f + tau12_3p_3_f + tau32_f_subtract - tau12_f_subtract) + 0.5*(eps_12_3_p_3_1_1p_f - tau_12_3_p_3_1_1p_f + eps12_1_1p_f - tau12_1_1p_f - eps12_3p_3_f + tau12_3p_3_f - eps12_f_subtract + tau12_f_subtract) - 0.5*(eps_32_3_p_3_1_1p_f - tau_32_3_p_3_1_1p_f - eps32_1_1p_f + tau32_1_1p_f + eps32_3p_3_f - tau32_3p_3_f - eps32_f_subtract + tau32_f_subtract) + eps23_1p_f - tau23_1p_f - eps23_1p_3p_3_f + tau23_1p_3p_3_f - eps21_3_f + tau21_3_f + eps21_3_1_1p_f - tau21_3_1_1p_f
 	#y_combo_f_domain = s31_f_convolve + s_13_2_f + s_21_2p_2_f + s_12_3p_2p_2_f - s21_f_convolve - s_12_3p_f - s_31_3_3p_f - s_13_2_3_3p_f + 0.5*(tau_21_2_p_2_3_3p_f - tau_31_2_p_2_3_3p_f - tau21_3_3p_f + tau31_3_3p_f - tau21_2p_2_f + tau31_2p_2_f + tau21_f_convolve - tau31_f_convolve) + 0.5*(eps_31_2_p_2_3_3p_f - tau_31_2_p_2_3_3p_f + eps31_3_3p_f - tau31_3_3p_f - eps31_2p_2_f + tau31_2p_2_f - eps31_f_convolve + tau31_f_convolve) - 0.5*(eps_21_2_p_2_3_3p_f - tau_21_2_p_2_3_3p_f - eps21_3_3p_f + tau21_3_3p_f + eps21_2p_2_f - tau21_2p_2_f - eps21_f_convolve + tau21_f_convolve) + eps12_3p_f - tau12_3p_f - eps12_3p_2p_2_f + tau12_3p_2p_2_f - eps13_2_f + tau13_2_f + eps13_2_3_3p_f - tau13_2_3_3p_f
 
-
 	y_combo_val = np.fft.irfft(y_combo_f_domain, norm='ortho')
 
+	centered_y = _centered_from_scipy(y_combo_val,length)
 
-	y_combo_val = y_combo_val[beg_ind:end_ind]
+	y_combo_val = centered_y[beg_ind:end_ind]
 
 
 	y_combo_f_domain = np.fft.rfft(window*y_combo_val,norm='ortho')[indices_f_band]
@@ -314,7 +329,10 @@ def z_combo(L_2_here, L_1_here,L_2_p_here,L_1_p_here):
 
 
 
-	z_combo_val = z_combo_val[beg_ind:end_ind]
+	centered_z = _centered_from_scipy(z_combo_val,length)
+
+
+	z_combo_val = centered_z[beg_ind:end_ind]
 
 
 	z_combo_f_domain = np.fft.rfft(window*z_combo_val,norm='ortho')[indices_f_band]
@@ -369,7 +387,16 @@ L_2 = 8.338867041
 L_2_p = 8.339095192
 L_3 = 8.338994879
 L_3_p = 8.338867041
+'''
 
+#simulated delay times in seconds rounded to 9 decimal places
+L_1 = 8.339095
+L_1_p =8.33899493
+L_2 = 8.33886739
+L_2_p = 8.33909552
+L_3 = 8.33899451
+L_3_p = 8.33886696
+'''
 
 f_s = 4
 
@@ -379,7 +406,7 @@ f_samp = 4
 number_n = 29
 
 f_min = 1.0e-4 # (= 0.0009765625)
-f_max = 1.0e-1
+f_max =1.0e-1
 
 
 
@@ -447,11 +474,13 @@ two_power = next_two_power(length)
 m = two_power-length+1
 
 '''
-m =291
+m =61
 #avoid circular convolution
 two_power=length+m-1
 
-two_power = next_fast_len(two_power,real=True)
+#two_power = next_fast_len(two_power,real=True)
+two_power = next_two_power(two_power)
+
 m = two_power-length+1
 
 print('length')
@@ -545,8 +574,8 @@ high = 8.339102379118449
 L_arm = 2.5e9
 avg_L = L_arm/const.c.value
 
-beg_ind,end_ind = cut_data(L_3,L_2,L_1,L_3_p,L_2_p,L_1_p,f_s,two_power)
-window = cosine(two_power)[beg_ind:end_ind:]
+beg_ind,end_ind = cut_data(L_3,L_2,L_1,L_3_p,L_2_p,L_1_p,f_s,length)
+window = cosine(length)[beg_ind:end_ind:]
 f_band = np.fft.rfftfreq(len(window),1/f_s)
 indices_f_band = np.where(np.logical_and(f_band>=f_min, f_band<=f_max))
 f_band=f_band[indices_f_band]
@@ -596,4 +625,6 @@ y_combo_initial = y_combo(initial_L_3,initial_L_1,initial_L_3_p,initial_L_1_p)
 z_combo_initial = z_combo(initial_L_2,initial_L_1,initial_L_2_p,initial_L_1_p)
 
 old_likelihood,determ_here,chi_2_here = likelihood_analytical_equal_arm(x_combo_initial,y_combo_initial,z_combo_initial)
+
+
 sys.exit()
