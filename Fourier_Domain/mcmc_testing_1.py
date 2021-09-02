@@ -9,8 +9,19 @@ from scipy.fft import next_fast_len
 import time
 from scipy.stats import norm
 from astropy import constants as const
+'''
+def next_two_power(n):
 
-
+	return int(pow(2, ceil(log(n, 2))))
+'''
+def _centered_from_scipy(arr, newshape):
+    # Return the center newshape portion of the array.
+    newshape = np.asarray(newshape)
+    currshape = np.array(arr.shape)
+    startind = (currshape - newshape) // 2
+    endind = startind + newshape
+    myslice = [slice(startind[k], endind[k]) for k in range(len(endind))]
+    return arr[tuple(myslice)]
 
 #...........................CREATING FILTERS.......................................
 def filters_lagrange(delay):
@@ -76,9 +87,13 @@ def cut_data(D_3,D_2,D_1,D_3_p,D_2_p,D_1_p,f_rate,length):
 	#filter_cut = int(round((61-1)))
 
 
-	beg_ind = half_extra + filter_cut + D_3_val+D_2_val+D_1_val+D_3_p_val+D_2_p_val+D_1_p_val
+	#beg_ind = half_extra + filter_cut + D_3_val+D_2_val+D_1_val+D_3_p_val+D_2_p_val+D_1_p_val
+	#beg_ind = half_extra + filter_cut 
+	beg_ind = filter_cut + D_3_val+D_2_val+D_1_val+D_3_p_val+D_2_p_val+D_1_p_val
+
 	#beg_ind = filter_cut
-	end_ind = int(two_power - filter_cut - half_extra - 1)
+	#end_ind = int(two_power - filter_cut - half_extra - 1)
+	end_ind = int(length - filter_cut - 1)
 
 
 	return beg_ind, end_ind
@@ -151,7 +166,9 @@ def x_combo(L_3_here, L_2_here,L_3_p_here,L_2_p_here):
 
 	x_combo_val = np.fft.irfft(x_combo_f_domain, norm='ortho')
 
-	x_combo_val = x_combo_val[beg_ind:end_ind]
+	centered_x = _centered_from_scipy(x_combo_val,length)
+
+	x_combo_val = centered_x[beg_ind:end_ind]
 
 	x_combo_f_domain = np.fft.rfft(window*x_combo_val,norm='ortho')[indices_f_band]
 
@@ -229,7 +246,10 @@ def y_combo(L_3_here, L_1_here,L_3_p_here,L_1_p_here):
 	y_combo_val = np.fft.irfft(y_combo_f_domain, norm='ortho')
 
 
-	y_combo_val = y_combo_val[beg_ind:end_ind]
+	centered_y = _centered_from_scipy(y_combo_val,length)
+
+
+	y_combo_val = centered_y[beg_ind:end_ind]
 
 
 	y_combo_f_domain = np.fft.rfft(window*y_combo_val,norm='ortho')[indices_f_band]
@@ -305,8 +325,9 @@ def z_combo(L_2_here, L_1_here,L_2_p_here,L_1_p_here):
 
 	z_combo_val = np.fft.irfft(z_combo_f_domain, norm='ortho')
 
-	z_combo_val = z_combo_val[beg_ind:end_ind]
+	centered_z = _centered_from_scipy(z_combo_val,length)
 
+	z_combo_val = centered_z[beg_ind:end_ind]
 
 	z_combo_f_domain = np.fft.rfft(window*z_combo_val,norm='ortho')[indices_f_band]
 
@@ -394,6 +415,9 @@ L_2_p = 8.339095192
 L_3 = 8.338994879
 L_3_p = 8.338867041
 
+L_arm = 2.5e9
+avg_L = L_arm/const.c.value
+f_transfer_Hz = const.c.value/L_arm
 
 f_s = 4
 
@@ -405,7 +429,7 @@ number_n = 29
 
 f_min = 1.0e-4 # (= 0.0009765625)
 f_max = 1.0e-1
-
+#f_max = f_transfer_Hz/3
 
 
 #............................................................
@@ -469,11 +493,13 @@ del data
 
 
 
-m =291
+m_before =301
 #avoid circular convolution
-two_power=length+m-1
+two_power_before=length+m_before-1
 
-two_power = next_fast_len(two_power,real=True)
+two_power = next_fast_len(two_power_before,real=True)
+#two_power = next_two_power(two_power_before)
+
 m = two_power-length+1
 '''
 print('length')
@@ -579,12 +605,12 @@ low = 8.338489422296977
 high = 8.339102379118449
 
 
-L_arm = 2.5e9
-avg_L = L_arm/const.c.value
-
-
+'''
 beg_ind,end_ind = cut_data(L_3,L_2,L_1,L_3_p,L_2_p,L_1_p,f_s,two_power)
 window = cosine(two_power)[beg_ind:end_ind:]
+'''
+beg_ind,end_ind = cut_data(L_3,L_2,L_1,L_3_p,L_2_p,L_1_p,f_s,length)
+window = cosine(length)[beg_ind:end_ind:]
 f_band = np.fft.rfftfreq(len(window),1/f_s)
 indices_f_band = np.where(np.logical_and(f_band>=f_min, f_band<=f_max))
 f_band=f_band[indices_f_band]
@@ -652,6 +678,10 @@ z_combo_initial = z_combo(initial_L_2,initial_L_1,initial_L_2_p,initial_L_1_p)
 
 
 old_likelihood,determ_here,chi_2_here = likelihood_analytical_equal_arm(x_combo_initial,y_combo_initial,z_combo_initial)
+#sys.exit()
+if k==1:
+	print('likelihood')
+	print(old_likelihood)
 #sys.exit()
 checkfile.write(str(old_likelihood) + " " + str(determ_here) + " " + str(chi_2_here) + " " + str(initial_L_1) + " " + str(initial_L_1_p) + " " + str(initial_L_2) + " " + str(initial_L_2_p)+ " " + str(initial_L_3) + " " + str(initial_L_3_p) + " " + str(accept/k) + "\n")
 old_L_1 = initial_L_1
