@@ -9,11 +9,7 @@ from scipy.fft import next_fast_len
 import time
 from scipy.stats import norm
 from astropy import constants as const
-'''
-def next_two_power(n):
 
-	return int(pow(2, ceil(log(n, 2))))
-'''
 def _centered_from_scipy(arr, newshape):
     # Return the center newshape portion of the array.
     newshape = np.asarray(newshape)
@@ -605,10 +601,7 @@ low = 8.338489422296977
 high = 8.339102379118449
 
 
-'''
-beg_ind,end_ind = cut_data(L_3,L_2,L_1,L_3_p,L_2_p,L_1_p,f_s,two_power)
-window = cosine(two_power)[beg_ind:end_ind:]
-'''
+
 beg_ind,end_ind = cut_data(L_3,L_2,L_1,L_3_p,L_2_p,L_1_p,f_s,length)
 window = cosine(length)[beg_ind:end_ind:]
 f_band = np.fft.rfftfreq(len(window),1/f_s)
